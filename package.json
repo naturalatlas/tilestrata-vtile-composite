@@ -1,0 +1,40 @@
+{
+  "name": "tilestrata-vtile-composite",
+  "version": "0.0.1",
+  "description": "Tilestrata plugin from compositing vector tiles from multiple layers",
+  "author": "Brandon Reavis <brandon@naturalatlas.com>",
+  "license": "Apache License, v2.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -R tap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naturalatlas/tilestrata-vtile-composite.git"
+  },
+  "keywords": [
+    "tilestrata",
+    "tilestrata-plugin",
+    "tilestrata-provider",
+    "vector",
+    "tile",
+    "mapnik",
+    "composite"
+  ],
+  "bugs": {
+    "url": "https://github.com/naturalatlas/tilestrata-vtile-composite/issues"
+  },
+  "homepage": "https://github.com/naturalatlas/tilestrata-vtile-composite",
+  "dependencies": {
+    "async": "~1.2.0",
+    "tilestrata-dependency": "~0.4.0"
+  },
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "mocha": "^2.0.1"
+  },
+  "peerDependencies": {
+    "tilestrata": "*",
+    "mapnik": "*"
+  }
+}
