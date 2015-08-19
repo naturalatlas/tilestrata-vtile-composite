@@ -8,16 +8,31 @@ module.exports = function(layers, options) {
 	var layers = layers.map(function(pair) {
 		var layer = pair[0];
 		var filename = pair[1];
-		return dependency(layer, filename);
+		var dep = dependency(layer, filename);
+		dep.name = layer;
+		return dep;
 	});
 
 	return {
+		init: function(server, callback){
+			layers.forEach(function(layer){
+				var source_opts = server.layer(layer.name).options;
+				layer.minZoom = source_opts.minZoom;
+				layer.maxZoom = source_opts.maxZoom;
+			});
+			callback();
+		},
 		serve: function(server, req, callback) {
 			var vtiles, result;
 
 			async.series([
 				function loadTiles(callback) {
 					async.map(layers, function(layer, callback) {
+
+						//don't request vector tiles beyond the zoom constraints of the source
+						if(layer.minZoom && req.z < layer.minZoom) return callback(null, null);
+						if(layer.maxZoom && req.z > layer.maxZoom) return callback(null, null);
+
 						layer.serve(server, req, function(err, buffer, headers) {
 							if (err) return callback(err);
 							if (buffer instanceof mapnik.VectorTile) return callback(null, buffer);
@@ -30,7 +45,10 @@ module.exports = function(layers, options) {
 							});
 						});
 					}, function(err, result) {
-						vtiles = result;
+						if(!err){
+							//remove nulls from skipped sources
+							vtiles = result.filter(function(vtile){ return !!vtile; });
+						}
 						callback(err);
 					});
 				},
