@@ -1,5 +1,4 @@
 # tilestrata-vtile-composite
-Tilestrata plugin from compositing vector tiles from multiple layers
 A [TileStrata](https://github.com/naturalatlas/tilestrata) plugin for compositing vector tiles from multiple layers which are typically from the [tilestrata-vtile](https://github.com/naturalatlas/tilestrata-vtile) plugin.
 
 ### Sample Usage
