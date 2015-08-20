@@ -33,7 +33,7 @@ module.exports = function(layers, options) {
 						if (layer.maxZoom && req.z > layer.maxZoom) return callback(null, null);
 
 						layer.provider.serve(server, req, function(err, buffer, headers) {
-							if (err) return callback(err);
+							if (err) return callback(err.statusCode === 204 ? null : err, null);
 							if(buffer.length <= 0) return callback(null, null);
 
 							if (buffer._vtile instanceof mapnik.VectorTile) {
