@@ -9,8 +9,7 @@ module.exports = function(layers, options) {
 		var layer = pair[0];
 		var filename = pair[1];
 		var dep = dependency(layer, filename);
-		dep.name = layer;
-		return dep;
+		return {provider: dep, name: layer};
 	});
 
 	return {
@@ -33,7 +32,7 @@ module.exports = function(layers, options) {
 						if (layer.minZoom && req.z < layer.minZoom) return callback(null, null);
 						if (layer.maxZoom && req.z > layer.maxZoom) return callback(null, null);
 
-						layer.serve(server, req, function(err, buffer, headers) {
+						layer.provider.serve(server, req, function(err, buffer, headers) {
 							if (err) return callback(err);
 							if (buffer instanceof mapnik.VectorTile) return callback(null, buffer);
 
@@ -45,7 +44,7 @@ module.exports = function(layers, options) {
 							});
 						});
 					}, function(err, result) {
-						if (!err){
+						if (!err) {
 							// remove nulls from skipped sources
 							vtiles = result.filter(function(vtile){ return !!vtile; });
 						}
