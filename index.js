@@ -34,7 +34,11 @@ module.exports = function(layers, options) {
 
 						layer.provider.serve(server, req, function(err, buffer, headers) {
 							if (err) return callback(err);
-							if (buffer instanceof mapnik.VectorTile) return callback(null, buffer);
+							if(buffer.length <= 0) return callback(null, null);
+
+							if (buffer._vtile instanceof mapnik.VectorTile) {
+								return callback(null, buffer._vtile);
+							}
 
 							var vtile = new mapnik.VectorTile(req.z, req.x, req.y);
 							vtile._srcbytes = buffer.length;
@@ -52,6 +56,8 @@ module.exports = function(layers, options) {
 					});
 				},
 				function compositeTiles(callback) {
+					if(vtiles.length === 0) return callback();
+
 					var merged = new mapnik.VectorTile(req.z, req.x, req.y);
 					merged.composite(vtiles, function(err){
 						vtiles = null;
@@ -65,6 +71,11 @@ module.exports = function(layers, options) {
 				}
 			], function(err) {
 				if (err) return callback(err);
+				if(!result) {
+					var err = new Error("No data");
+					err.statusCode = 204;
+					return callback(err);
+				} 
 				callback(null, result, {'Content-Type': 'application/x-protobuf'});
 			});
 		}

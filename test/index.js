@@ -83,4 +83,29 @@ describe('"tilestrata-vtile-composite"', function() {
 			});
 		});
 	});
+	it('should gracefully error if empty buffer from source', function(done) {
+		var server = new TileServer();
+
+		var req = TileRequest.parse('/layer/5/5/12/tile.pbf');
+		server.layer('src').route('tile.pbf').use({
+			serve: function(server, req, callback) {
+				var vtile = new mapnik.VectorTile(5,5,12);
+				var buffer = vtile.getData();
+				buffer._vtile = vtile; 
+				return callback(null, buffer, {});
+			}
+		});
+		server.layer('layer').route('tile.pbf').use(vtilecomposite([
+			['src','tile.pbf']
+		]));
+
+		server.initialize(function(err) {
+			assert.isFalse(!!err, err);
+			server.serve(req, false, function(status, buffer, headers) {
+				assert.equal(status, 204);
+				assert.equal(buffer.toString(), 'No data');
+				done();
+			});
+		});
+	});
 });
