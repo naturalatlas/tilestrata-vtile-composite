@@ -15,7 +15,7 @@ test-ci-coverage:
 	$(ISTANBUL) cover $(_MOCHA) --report lcovonly -- -R tap
 
 	@echo
-	@echo Sending report to coveralls.io...
+	@echo Sending report to codecov...
 	@cat ./coverage/lcov.info | $(CODECOV)
 	@rm -rf ./coverage
 	@echo Done
