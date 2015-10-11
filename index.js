@@ -13,6 +13,7 @@ module.exports = function(layers, options) {
 	});
 
 	return {
+		name: 'vtile-composite',
 		init: function(server, callback) {
 			layers.forEach(function(layer) {
 				var source_opts = server.layer(layer.name).options;
@@ -75,7 +76,7 @@ module.exports = function(layers, options) {
 					var err = new Error("No data");
 					err.statusCode = 204;
 					return callback(err);
-				} 
+				}
 				callback(null, result, {'Content-Type': 'application/x-protobuf'});
 			});
 		}

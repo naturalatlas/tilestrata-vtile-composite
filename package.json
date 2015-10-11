@@ -26,12 +26,12 @@
   },
   "homepage": "https://github.com/naturalatlas/tilestrata-vtile-composite",
   "dependencies": {
-    "async": "~1.2.0",
-    "tilestrata-dependency": "~0.4.0"
+    "async": "~1.4.2",
+    "tilestrata-dependency": "~0.4.1"
   },
   "devDependencies": {
-    "chai": "^1.10.0",
-    "mocha": "^2.0.1"
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3"
   },
   "peerDependencies": {
     "tilestrata": "*",
