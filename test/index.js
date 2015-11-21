@@ -27,10 +27,11 @@ describe('"tilestrata-vtile-composite"', function() {
 		]));
 
 		server.initialize(function(err) {
-			assert.isFalse(!!err, err);
+			if (err) throw err;
 			server.serve(req, false, function(status, buffer, headers) {
 				assert.equal(status, 200);
 				assert.equal(headers['Content-Type'], 'application/x-protobuf');
+				assert.equal(headers['Content-Encoding'], 'gzip');
 				assert.instanceOf(buffer, Buffer);
 
 				var vtile = buffer._vtile;
@@ -38,7 +39,7 @@ describe('"tilestrata-vtile-composite"', function() {
 				assert.equal(buffer._vx, 5);
 				assert.equal(buffer._vy, 12);
 				assert.equal(buffer._vz, 5);
-				assert.equal(vtile.getData().length,23454);
+				assert.equal(vtile.getData().length, 23454);
 				assert.deepEqual(vtile.names(),["world","world"]);
 
 				done();
@@ -71,15 +72,16 @@ describe('"tilestrata-vtile-composite"', function() {
 		]));
 
 		server.initialize(function(err) {
-			assert.isFalse(!!err, err);
+			if (err) throw err;
 			server.serve(req, false, function(status, buffer, headers) {
 				assert.equal(status, 200);
+				assert.equal(headers['Content-Encoding'], 'gzip');
 				assert.equal(headers['Content-Type'], 'application/x-protobuf');
 				assert.instanceOf(buffer, Buffer);
 
 				var vtile = buffer._vtile;
 				assert.instanceOf(vtile, mapnik.VectorTile);
-				assert.equal(vtile.getData().length,11727);
+				assert.equal(vtile.getData().length, 11727);
 				assert.deepEqual(vtile.names(),["world"]);
 
 				done();
@@ -133,15 +135,16 @@ describe('"tilestrata-vtile-composite"', function() {
 		]));
 
 		server.initialize(function(err) {
-			assert.isFalse(!!err, err);
+			if (err) throw err;
 			server.serve(req, false, function(status, buffer, headers) {
 				assert.equal(status, 200);
+				assert.equal(headers['Content-Encoding'], 'gzip');
 				assert.equal(headers['Content-Type'], 'application/x-protobuf');
 				assert.instanceOf(buffer, Buffer);
 
 				var vtile = buffer._vtile;
 				assert.instanceOf(vtile, mapnik.VectorTile);
-				assert.equal(vtile.getData().length,11727);
+				assert.equal(vtile.getData().length, 11727);
 				assert.deepEqual(vtile.names(),["world"]);
 
 				done();

@@ -5,6 +5,10 @@ var mapnik = require('mapnik');
 module.exports = function(layers, options) {
 	options = options || {};
 
+	var dataopts = {compression: options.hasOwnProperty('compression') ? options.compression : 'gzip'};
+	if (options.compressionLevel) dataopts.level = options.compressionLevel;
+	if (options.compressionStrategy) dataopts.strategy = options.compressionStrategy;
+
 	var layers = layers.map(function(pair) {
 		var layer = pair[0];
 		var filename = pair[1];
@@ -69,7 +73,7 @@ module.exports = function(layers, options) {
 						vtiles = null;
 						if (err) return callback(err);
 
-						result = merged.getData();
+						result = merged.getData(dataopts);
 						result._vtile = merged;
 						result._vx = req.x;
 						result._vy = req.y;
@@ -85,7 +89,13 @@ module.exports = function(layers, options) {
 					err.statusCode = 204;
 					return callback(err);
 				}
-				callback(null, result, {'Content-Type': 'application/x-protobuf'});
+
+				var headers = {'Content-Type': 'application/x-protobuf'};
+				if (dataopts.compression === 'gzip') {
+					headers['Content-Encoding'] = 'gzip';
+				}
+
+				callback(null, result, headers);
 			});
 		}
 	};
