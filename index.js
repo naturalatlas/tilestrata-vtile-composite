@@ -35,9 +35,14 @@ module.exports = function(layers, options) {
 
 						layer.provider.serve(server, req, function(err, buffer, headers) {
 							if (err) return callback(err.statusCode === 204 ? null : err, null);
-							if(buffer.length <= 0) return callback(null, null);
+							if (buffer.length <= 0) return callback(null, null);
 
-							if (buffer._vtile instanceof mapnik.VectorTile) {
+							// only use the vector tile instance directly if the extent is valid for the
+							// requested tile, which won't be the case for metatiling and overzooming
+							if (buffer._vtile instanceof mapnik.VectorTile
+								&& buffer._vx === req.x
+								&& buffer._vy === req.y
+								&& buffer._vz === req.z) {
 								return callback(null, buffer._vtile);
 							}
 
@@ -57,22 +62,25 @@ module.exports = function(layers, options) {
 					});
 				},
 				function compositeTiles(callback) {
-					if(vtiles.length === 0) return callback();
+					if (vtiles.length === 0) return callback();
 
 					var merged = new mapnik.VectorTile(req.z, req.x, req.y);
 					merged.composite(vtiles, function(err){
 						vtiles = null;
-						if(err) return callback(err);
+						if (err) return callback(err);
 
 						result = merged.getData();
 						result._vtile = merged;
+						result._vx = req.x;
+						result._vy = req.y;
+						result._vz = req.z;
 						callback();
 					});
 
 				}
 			], function(err) {
 				if (err) return callback(err);
-				if(!result) {
+				if (!result) {
 					var err = new Error("No data");
 					err.statusCode = 204;
 					return callback(err);

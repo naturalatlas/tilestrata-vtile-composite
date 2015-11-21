@@ -35,6 +35,9 @@ describe('"tilestrata-vtile-composite"', function() {
 
 				var vtile = buffer._vtile;
 				assert.instanceOf(vtile, mapnik.VectorTile);
+				assert.equal(buffer._vx, 5);
+				assert.equal(buffer._vy, 12);
+				assert.equal(buffer._vz, 5);
 				assert.equal(vtile.getData().length,23454);
 				assert.deepEqual(vtile.names(),["world","world"]);
 
@@ -91,7 +94,7 @@ describe('"tilestrata-vtile-composite"', function() {
 			serve: function(server, req, callback) {
 				var vtile = new mapnik.VectorTile(5,5,12);
 				var buffer = vtile.getData();
-				buffer._vtile = vtile; 
+				buffer._vtile = vtile;
 				return callback(null, buffer, {});
 			}
 		});
